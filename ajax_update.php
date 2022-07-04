@@ -2,11 +2,12 @@
 include 'function.php';
 
     $crud = new crud();
+    $id = $_POST['id'];
       $name = $_POST['name'];
       $username = $_POST['username'];
       $email = $_POST['email'];
       $password = $_POST['password'];
-      $name = $_POST['name'];
+
       $condition = array( 'id' => $id);
     $data = array( 'name' => $name,
                     'id' => $id,

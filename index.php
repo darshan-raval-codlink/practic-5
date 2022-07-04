@@ -273,25 +273,24 @@ else{
     });
     $(document).on("click",".edit-submit", function(){
         $id = $('#edit-id').val();
-        $name = $("[name ='name']").val();
-        $username = $("[name ='username']").val();
-        $email = $("[name ='email']").val();
-        $password = $("[name ='password']").val();
-        $confirmpassword = $("[name ='confirmpassword']").val();
-        console.log($name);
+        $name = $('#edit-name').val();
+        $username = $("#edit-username").val();
+        $email = $("#edit-email").val();
+        $password = $("#edit-password").val();
+        $confirmpassword = $("#edit-password").val();
         $.ajax({
                 url: 'ajax_update.php',
                 type: 'POST',
-                data: {name:$name, username:$username, email:$email, password:$password},
+                data: {id : $id, name:$name, username:$username, email:$email, password:$password},
                 success: function(msg) {
-                    // console.log(msg);
+                    console.log(msg);
                     if (msg == "1") {
                         $('.statusMsg').html(
-                            '<span style="color:green;">USER RECODE ARE INSERTED.</p>'
+                            '<span style="color:green;">USER RECODE ARE UPDATED.</p>'
                             );
                     } else {
                         $('.statusMsg').html(
-                            '<span style="color:red;">USER RECODE ARE NOT INSERTED.</span>');
+                            '<span style="color:red;">USER RECODE ARE NOT UPDATED.</span>');
                     }
                 }
             });

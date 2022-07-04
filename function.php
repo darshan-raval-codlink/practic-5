@@ -122,7 +122,13 @@ class crud extends Connection{
 			return sprintf("%s='%s'", $k, $v);
 		}, $set, array_keys($set)));
 		$upd = "UPDATE $tbl SET $string WHERE $fields='$values' ";
-		$this->db->query($upd) or die("query not run");
+    $query = mysqli_query($this->conn, $upd);
+		// $this->db->query($upd) or die("query not run");
+    if ($query) {
+			echo "1";
+		}else{
+      echo "0";
+    }
 	}
 }
 
