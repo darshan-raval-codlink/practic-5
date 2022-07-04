@@ -68,9 +68,9 @@ else{
                         <td><?php echo $rows['name'];?></td>
                         <td><?php echo $rows['username'];?></td>
                         <td><?php echo $rows['email'];?></td>
-                        <td><button type="submit" class="btn btn-success" data-toggle="modal"
-                                data-target="#exampleModal">Edit</button></td>
-                        <td><button type="submit" class="btn btn-danger">delate</button></td>
+                        <td><button type="submit" class="btn btn-success edit-btn" data-toggle="modal"
+                                data-target="#exampleModal1" data-eid="<?php echo $rows['id'];?>">Edit</button></td>
+                        <td><button type="submit" class="btn btn-danger" id="deleteuser" onclick="deleteuser(<?php echo $rows['id'];?>)">delate</button></td>
                     </tr>
                     <?php } ?>
                 </tbody>
@@ -85,7 +85,7 @@ else{
             </table>
         </div>
         <!-- popup form  Modal-->
-
+                <!-- add usser  -->
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -98,7 +98,7 @@ else{
                     </div>
                     <div class="modal-body">
                         <p class="statusMsg"></p>
-                        <form autocomplete="off">
+                        <form autocomplete="off" id="addForm">
                             <div class="form-group">
                                 <label for="" class="form-label">Name : </label>
                                 <input type="text" name="name" required value="" class="form-control name">
@@ -123,8 +123,51 @@ else{
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-success" style="margin: 10px 0;"
-                            onclick="AddUser()">Register</button>
+                        <button type="submit" class="btn btn-success" style="margin: 10px 0;" onclick="addUser()">Register</button>
+                        <button type="button" class="btn btn-secondary submitBtn" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- update user form -->
+        <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">EDIT USER RECODE</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="statusMsg"></p>
+                        <form autocomplete="off" id="editForm">
+                            <!-- <div class="form-group">
+                                <label for="" class="form-label">Name : </label>
+                                <input type="text" name="name" required value="" class="form-control name">
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="form-label">Username : </label>
+                                <input type="text" name="username" required value="" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="form-label">Email : </label>
+                                <input type="email" name="email" required value="" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="form-label">Password : </label>
+                                <input type="password" name="password" required value="" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="form-label">Confirm Password : </label>
+                                <input type="password" name="confirmpassword" required value="" class="form-control">
+                            </div> -->
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success edit-submit" id="edit-submit" style="margin: 10px 0;" >UPDATE</button>
                         <button type="button" class="btn btn-secondary submitBtn" data-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -136,7 +179,7 @@ else{
     <script src="https://code.jquery.com/jquery-1.11.1.js"
         integrity="sha256-MCmDSoIMecFUw3f1LicZ/D/yonYAoHrgiep/3pCH9rw=" crossorigin="anonymous"></script>
     <script>
-    function AddUser() {
+    function addUser() {
         $reg = /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i;
         $name = $("[name ='name']").val();
         $username = $("[name ='username']").val();
@@ -168,18 +211,13 @@ else{
         }
          else {
             $.ajax({
+                url: 'crud.php',
                 type: 'POST',
-                url: 'function.php',
-                data: 'contactFrmSubmit=1&name=' + $name +'&username=' + $username + '&email=' + $email + '&password' + $password,
-                beforeSend: function() {
-                    $('.submitBtn').attr("disabled", "disabled");
-                    $('.modal-body').css('opacity', '.5');
-                },
+                data: {name:$name, username:$username, email:$email, password:$password},
                 success: function(msg) {
-                    if (msg == 'ok') {
-                        $('#inputName').val('');
-                        $('#inputEmail').val('');
-                        $('#inputMessage').val('');
+                    // console.log(msg);
+                    if (msg == "1") {
+                        $("#addForm").trigger("reset");
                         $('.statusMsg').html(
                             '<span style="color:green;">USER RECODE ARE INSERTED.</p>'
                             );
@@ -187,13 +225,77 @@ else{
                         $('.statusMsg').html(
                             '<span style="color:red;">USER RECODE ARE NOT INSERTED.</span>');
                     }
-                    $('.submitBtn').removeAttr("disabled");
-                    $('.modal-body').css('opacity', '');
                 }
             });
         }
-        return false;
+        return false; 
     }
+    function deleteuser($id){
+        $.ajax({
+                url: 'crud.php',
+                type: 'POST',
+                data: {userid: $id},
+                success: function(msg) {
+                    // console.log(msg);
+                    if (msg == "1") {
+                        alert('user recode delated.');
+                    } else {
+                       
+                    }
+                }
+            });
+       
+    }
+    $(document).on("click",".edit-btn", function(){
+            // alert("button cllieked");
+            var id = $(this).data("eid");
+            // alert(id);
+
+        $.ajax({
+                url: 'crud.php',
+                type: 'POST',
+                data: {id: id},
+                success: function(data) {
+                    $('#editForm').html(data);
+                    // console.log(msg);
+                    // if (msg == "1") {
+                    //     $("#addForm").trigger("reset");
+                    //     $('.statusMsg').html(
+                    //         '<span style="color:green;">USER RECODE ARE INSERTED.</p>'
+                    //         );
+                    // } else {
+                    //     $('.statusMsg').html(
+                    //         '<span style="color:red;">USER RECODE ARE NOT INSERTED.</span>');
+                    // }
+                }
+        });
+       
+    });
+    $(document).on("click",".edit-submit", function(){
+        $id = $('#edit-id').val();
+        $name = $("[name ='name']").val();
+        $username = $("[name ='username']").val();
+        $email = $("[name ='email']").val();
+        $password = $("[name ='password']").val();
+        $confirmpassword = $("[name ='confirmpassword']").val();
+        console.log($name);
+        $.ajax({
+                url: 'ajax_update.php',
+                type: 'POST',
+                data: {name:$name, username:$username, email:$email, password:$password},
+                success: function(msg) {
+                    // console.log(msg);
+                    if (msg == "1") {
+                        $('.statusMsg').html(
+                            '<span style="color:green;">USER RECODE ARE INSERTED.</p>'
+                            );
+                    } else {
+                        $('.statusMsg').html(
+                            '<span style="color:red;">USER RECODE ARE NOT INSERTED.</span>');
+                    }
+                }
+            });
+    });
     </script>
 </body>
 
